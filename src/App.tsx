@@ -13,6 +13,7 @@ function App() {
   let elementTarget: HTMLCanvasElement | undefined = undefined;
 
   onMount(() => {
+    let time: number = 0;
     const { camera, renderer, scene } = setupBasicScene(elementTarget!);
 
     const controls = addOrbitControls(camera, renderer);
@@ -21,6 +22,9 @@ function App() {
     const material = new ShaderMaterial({
       vertexShader: vertex,
       fragmentShader: fragment,
+      uniforms: {
+        u_time: { value: time },
+      },
     });
     const cube = new Mesh(geometry, material);
     scene.add(cube);
@@ -32,10 +36,10 @@ function App() {
     function animate() {
       requestAnimationFrame(animate);
 
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
-
       controls.update();
+
+      time += 0.02;
+      material.uniforms.u_time.value = time;
 
       renderer.render(scene, camera);
     }
